@@ -44,6 +44,7 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		encoding: String.Encoding,
 		chunkSize: Int
 	) throws -> String {
+		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
 		// The message may not fit in a single chunk. To overcome this, we continue to request data until we are at the end of the message.
 		// Continue until `string` ends in the terminator.
 		var string = String()
@@ -94,6 +95,8 @@ extension TCPIPInstrument: MessageBasedInstrument {
 	}
 	
 	public func readBytes(length: Int, chunkSize: Int) throws -> Data {
+		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+		
 		var data = Data(capacity: max(length, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
@@ -128,6 +131,8 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		strippingTerminator: Bool,
 		chunkSize: Int
 	) throws -> Data {
+		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+		
 		var data = Data(capacity: max(maxLength ?? chunkSize, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
@@ -174,6 +179,8 @@ extension TCPIPInstrument: MessageBasedInstrument {
 										appending terminator: String?,
 										encoding: String.Encoding
 	) throws {
+		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+		
 		try (string + (terminator ?? ""))
 			.cString(using: encoding)?
 			.withUnsafeBufferPointer() { buffer -> () in
@@ -189,6 +196,8 @@ extension TCPIPInstrument: MessageBasedInstrument {
 	}
 	
 	public func writeBytes(_ data: Data, appending terminator: Data?) throws {
+		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+		
 		let data = data + (terminator ?? Data())
 		do {
 			try _session.socket.write(from: data)
