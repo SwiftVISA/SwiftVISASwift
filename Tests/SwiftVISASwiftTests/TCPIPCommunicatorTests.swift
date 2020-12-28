@@ -31,13 +31,12 @@ final class TCPIPCommunicatorTests: XCTestCase {
 	/// Tests reading from the instrument.
 	///
 	/// The write and read commands should not throw an error.
-	func testRead() {
+	func testQuery() {
 		// A sample write-read command.
 		let command = "VOLTAGE?"
 		
 		do {
-			try Self.communicator.write(command)
-			_ = try Self.communicator.read()
+			_ = try Self.communicator.query(command)
 		} catch {
 			XCTFail("Failed to read \"\(command)\" with error: \(error)")
 		}
@@ -46,7 +45,7 @@ final class TCPIPCommunicatorTests: XCTestCase {
 	/// Tests reading from the instrument when it should not be able to.
 	///
 	/// The command specified is write-only, so the read operation should fail and throw an error. The write operation should not throw an error.
-	func testCantRead() {
+	func testCantQuery() {
 		// A sample write-only command.
 		let command = "OUTPUT OFF"
 		
@@ -55,6 +54,7 @@ final class TCPIPCommunicatorTests: XCTestCase {
 		} catch {
 			XCTFail("Failed to write \"\(command)\" with error: \(error)")
 		}
+		
 		do {
 			_ = try Self.communicator.read()
 			XCTFail("Read when no text returned \"\(command)\"")
@@ -64,9 +64,51 @@ final class TCPIPCommunicatorTests: XCTestCase {
 		}
 	}
 	
+	func testClose() {
+		let commands = ["VOLTAGE?", "OUTPUT OFF"]
+		
+		defer {
+			// The connection may be closed, so reset the connection
+			Self.setUp()
+		}
+		
+		do {
+			try Self.communicator.write(commands[0])
+		} catch {
+			XCTFail("Failed to write \"\(commands[0])\" with error: \(error)")
+		}
+		
+		do {
+			try Self.communicator.session.close()
+		} catch {
+			XCTFail("Failed to close instrument")
+		}
+		
+		testRead:
+		do {
+			_ = try Self.communicator.read()
+			XCTFail("Successfully read from instrument after closing")
+		} catch {
+			guard let error = error as? TCPIPInstrument.Error else {
+				XCTFail("Error was of wrong type")
+				break testRead
+			}
+			
+			XCTAssertEqual(error, .couldNotConnect)
+		}
+		
+		do {
+			try Self.communicator.write(commands[1])
+			XCTFail("Seccessfully wrote to instrument after closing")
+		} catch {
+			// We want this to throw
+		}
+	}
+	
 	static var allTests = [
 		("testWrite", testWrite),
-		("testRead", testRead),
-		("testCantRead", testCantRead)
+		("testQuery", testQuery),
+		("testCantRead", testCantQuery),
+		("testClose", testClose)
 	]
 }

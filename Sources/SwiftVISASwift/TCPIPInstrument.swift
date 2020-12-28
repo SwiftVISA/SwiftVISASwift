@@ -6,14 +6,18 @@
 //
 
 import Foundation
+import CoreSwiftVISA
 import Socket
 
 /// An instrument connected over TCP-IP.
 public final class TCPIPInstrument {
-	/// The socket used for communicating with the instrument.
-	internal let socket: Socket
+	internal let _session: TCPIPSession
+	
+	public var session: Session {
+		return _session
+	}
 	/// Attributes to control the communication with the instrument.
-	public var attributes = InstrumentAttributes()
+	public var attributes = MessageBasedInstrumentAttributes()
 	/// Tries to create an instance from the specified address, and port of the instrument. A timeout value must also be specified.
 	///
 	/// - Parameters:
@@ -23,36 +27,12 @@ public final class TCPIPInstrument {
 	///
 	/// - Throws: An error if a socket could not be created, connected, or configured properly.
 	public init(address: String, port: Int, timeout: TimeInterval) throws {
-		do {
-			// TODO: Support IVP6 addresses (family: .net6)
-			socket = try Socket.create(family: .inet, type: .stream, proto: .tcp)
-		} catch { throw Error.couldNotCreateSocket }
-		
-		// TODO: XPSQ8 sent data in packets of 1024. What size packets does VISA use?
-		socket.readBufferSize = 1024
-		
-		do {
-			// TODO: We might need to specify a timeout value here. It says adding a timeout can put it into non-blocking mode, and I'm not sure What that will do.
-			try socket.connect(to: address, port: Int32(port))
-		} catch { throw Error.couldNotConnect }
-		
-		do {
-			// Timeout is set as an integer in milliseconds, but it is clearer to pass in a TimeInterval into the function because TimeInterval is used
-			// thoughout Foundation to represent time in seconds.
-			let timeoutInMilliseconds = UInt(timeout * 1_000.0)
-			try socket.setReadTimeout(value: timeoutInMilliseconds)
-			try socket.setWriteTimeout(value: timeoutInMilliseconds)
-		} catch { throw Error.couldNotSetTimeout }
-		
-		do {
-			// We want to user to manage multithreding, so use blocking.
-			try socket.setBlocking(mode: true)
-		} catch { throw Error.couldNotEnableBlocking }
+		try _session = TCPIPSession(address: address, port: port, timeout: timeout)
 	}
 	
 	deinit {
-		// Close the connection to the socket because we will no longer need it.
-		socket.close()
+		// Close the connection because we will no longer need it.
+		try? session.close()
 	}
 }
 
@@ -69,11 +49,18 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		var string = String()
 		var chunk = Data(capacity: chunkSize)
 		
-		socket.readBufferSize = chunkSize
+		_session.socket.readBufferSize = chunkSize
 		
 		repeat {
 			do {
-				let bytesRead = try socket.read(into: &chunk)
+				let bytesRead: Int
+				do {
+					bytesRead = try _session.socket.read(into: &chunk)
+				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+					throw Error.couldNotConnect
+				} catch {
+					throw Error.failedReadOperation
+				}
 				
 				guard let substring = String(bytes: chunk[..<bytesRead], encoding: encoding)
 				else {
@@ -110,11 +97,18 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		var data = Data(capacity: max(length, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
-		socket.readBufferSize = chunkSize
+		_session.socket.readBufferSize = chunkSize
 		
 		repeat {
 			do {
-				let bytesRead = try socket.read(into: &chunk)
+				let bytesRead: Int
+				do {
+					bytesRead = try _session.socket.read(into: &chunk)
+				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+					throw Error.couldNotConnect
+				} catch {
+					throw Error.failedReadOperation
+				}
 				
 				data.append(chunk)
 				
@@ -137,11 +131,18 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		var data = Data(capacity: max(maxLength ?? chunkSize, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
-		socket.readBufferSize = chunkSize
+		_session.socket.readBufferSize = chunkSize
 		
 		repeat {
 			do {
-				let bytesRead = try socket.read(into: &chunk)
+				let bytesRead: Int
+				do {
+					bytesRead = try _session.socket.read(into: &chunk)
+				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+					throw Error.couldNotConnect
+				} catch {
+					throw Error.failedReadOperation
+				}
 				
 				data.append(chunk)
 				
@@ -177,13 +178,25 @@ extension TCPIPInstrument: MessageBasedInstrument {
 			.cString(using: encoding)?
 			.withUnsafeBufferPointer() { buffer -> () in
 				// The C String includes a null terminated byte -- we will discard this
-				try socket.write(from: buffer.baseAddress!, bufSize: buffer.count - 1)
+				do {
+					try _session.socket.write(from: buffer.baseAddress!, bufSize: buffer.count - 1)
+				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+					throw Error.couldNotConnect
+				} catch {
+					throw Error.failedWriteOperation
+				}
 			}
 	}
 	
 	public func writeBytes(_ data: Data, appending terminator: Data?) throws {
 		let data = data + (terminator ?? Data())
-		try socket.write(from: data)
+		do {
+			try _session.socket.write(from: data)
+		} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+			throw Error.couldNotConnect
+		} catch {
+			throw Error.failedReadOperation
+		}
 	}
 }
 
