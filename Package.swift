@@ -15,7 +15,6 @@ let package = Package(
 		// Dependencies declare other packages that this package depends on.
 		// .package(url: /* package url */, from: "1.0.0"),
 		.package(path: "../CoreSwiftVISA"),
-		.package(url: "https://github.com/yeokm1/SwiftSerial.git", from: "0.1.2"),
 		.package(name: "Socket", url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.0")
 	],
 	targets: [
@@ -23,7 +22,7 @@ let package = Package(
 		// Targets can depend on other targets in this package, and on products in packages this package depends on.
 		.target(
 			name: "SwiftVISASwift",
-			dependencies: ["CoreSwiftVISA", "Socket", "SwiftSerial"]),
+			dependencies: ["CoreSwiftVISA", "Socket"]),
 		.testTarget(
 			name: "SwiftVISASwiftTests",
 			dependencies: ["SwiftVISASwift"]),
