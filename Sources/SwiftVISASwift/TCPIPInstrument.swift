@@ -44,7 +44,6 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		encoding: String.Encoding,
 		chunkSize: Int
 	) throws -> String {
-		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
 		// The message may not fit in a single chunk. To overcome this, we continue to request data until we are at the end of the message.
 		// Continue until `string` ends in the terminator.
 		var string = String()
@@ -56,6 +55,7 @@ extension TCPIPInstrument: MessageBasedInstrument {
 			do {
 				let bytesRead: Int
 				do {
+					usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
 					bytesRead = try _session.socket.read(into: &chunk)
 				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 					throw Error.couldNotConnect
@@ -95,30 +95,27 @@ extension TCPIPInstrument: MessageBasedInstrument {
 	}
 	
 	public func readBytes(length: Int, chunkSize: Int) throws -> Data {
-		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-		
 		var data = Data(capacity: max(length, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
 		_session.socket.readBufferSize = chunkSize
 		
 		repeat {
+			let bytesRead: Int
 			do {
-				let bytesRead: Int
-				do {
-					bytesRead = try _session.socket.read(into: &chunk)
-				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
-					throw Error.couldNotConnect
-				} catch {
-					throw Error.failedReadOperation
-				}
-				
-				data.append(chunk)
-				
-				if bytesRead == 0 {
-					// No more data to read
-					return data
-				}
+				usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+				bytesRead = try _session.socket.read(into: &chunk)
+			} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+				throw Error.couldNotConnect
+			} catch {
+				throw Error.failedReadOperation
+			}
+			
+			data.append(chunk)
+			
+			if bytesRead == 0 {
+				// No more data to read
+				return data
 			}
 		} while data.count < length
 		
@@ -131,30 +128,27 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		strippingTerminator: Bool,
 		chunkSize: Int
 	) throws -> Data {
-		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-		
 		var data = Data(capacity: max(maxLength ?? chunkSize, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
 		_session.socket.readBufferSize = chunkSize
 		
 		repeat {
+			let bytesRead: Int
 			do {
-				let bytesRead: Int
-				do {
-					bytesRead = try _session.socket.read(into: &chunk)
-				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
-					throw Error.couldNotConnect
-				} catch {
-					throw Error.failedReadOperation
-				}
-				
-				data.append(chunk)
-				
-				if bytesRead == 0 {
-					// No more data to read (even if we aren't at the terminator)
-					return data
-				}
+				usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+				bytesRead = try _session.socket.read(into: &chunk)
+			} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+				throw Error.couldNotConnect
+			} catch {
+				throw Error.failedReadOperation
+			}
+			
+			data.append(chunk)
+			
+			if bytesRead == 0 {
+				// No more data to read (even if we aren't at the terminator)
+				return data
 			}
 			// TODO: Don't need to search all of the held data, only need to seach the last chunk and some extra in case the terminator data falls over multiple chunks.
 		} while data.range(of: terminator, options: .backwards) == nil
@@ -178,14 +172,13 @@ extension TCPIPInstrument: MessageBasedInstrument {
 	public func write(_ string: String,
 										appending terminator: String?,
 										encoding: String.Encoding
-	) throws {
-		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-		
+	) throws -> Int {
 		try (string + (terminator ?? ""))
 			.cString(using: encoding)?
 			.withUnsafeBufferPointer() { buffer -> () in
 				// The C String includes a null terminated byte -- we will discard this
 				do {
+					usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
 					try _session.socket.write(from: buffer.baseAddress!, bufSize: buffer.count - 1)
 				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 					throw Error.couldNotConnect
@@ -193,19 +186,28 @@ extension TCPIPInstrument: MessageBasedInstrument {
 					throw Error.failedWriteOperation
 				}
 			}
+		
+		// TODO: Is string.count always equal to the number of bytes?
+		// Will always write all bytes or will throw
+		return string.count
 	}
 	
-	public func writeBytes(_ data: Data, appending terminator: Data?) throws {
-		usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-		
+	public func writeBytes(
+		_ data: Data,
+		appending terminator: Data?
+	) throws -> Int {
 		let data = data + (terminator ?? Data())
 		do {
+			usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
 			try _session.socket.write(from: data)
 		} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 			throw Error.couldNotConnect
 		} catch {
 			throw Error.failedReadOperation
 		}
+		
+		// Will alwyas write all bytes or will throw
+		return data.count
 	}
 }
 
