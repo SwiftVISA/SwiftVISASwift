@@ -11,6 +11,7 @@ import Socket
 
 /// An instrument connected over TCP-IP.
 public final class TCPIPInstrument {
+	// We use a custom stored session. By creating an internal property, we can safely access custom properties and methods without casting. We can then just return this property from the session property. Idealy the session property would be of type `some Session`, but this would limit the versions of Swift that were compatible.
 	internal let _session: TCPIPSession
 	
 	public var session: Session {
@@ -36,7 +37,7 @@ public final class TCPIPInstrument {
 	}
 }
 
-// MARK: Communicator
+// MARK:- MessageBasedInstrument
 extension TCPIPInstrument: MessageBasedInstrument {
 	public func read(
 		until terminator: String,
@@ -233,7 +234,7 @@ extension TCPIPInstrument {
 	}
 }
 
-// MARK: Error Descriptions
+// MARK:- Error Descriptions
 extension TCPIPInstrument.Error {
 	public var localizedDescription: String {
 		switch self {
@@ -255,22 +256,22 @@ extension TCPIPInstrument.Error {
 	}
 }
 
-// MARK: Instrument Manager
+// MARK:- Instrument Manager
 extension InstrumentManager {
 	/// Returns the instrument at the specified network address.
-		/// - Parameters:
-		///   - address: The network address (IPv4 or IPv6).
-		///   - port: The port the instrument is connected on.
-		///   - timeout: The maximum wait time when first connecting to this instrument.
-		/// - Throws: If the instrument could not be found or connected to.
-		/// - Returns: The instrument at the specified address.
-		public func instrumentAt(
-			address: String,
-			port: Int, timeout:
-				TimeInterval? = nil
-		) throws -> MessageBasedInstrument {
-			return try TCPIPInstrument(address: address,
-																 port: port,
-																 timeout: timeout ?? connectionTimeout)
-		}
+	/// - Parameters:
+	///   - address: The network address (IPv4 or IPv6).
+	///   - port: The port the instrument is connected on.
+	///   - timeout: The maximum wait time when first connecting to this instrument.
+	/// - Throws: If the instrument could not be found or connected to.
+	/// - Returns: The instrument at the specified address.
+	public func instrumentAt(
+		address: String,
+		port: Int,
+		timeout: TimeInterval? = nil
+	) throws -> MessageBasedInstrument {
+		return try TCPIPInstrument(address: address,
+															 port: port,
+															 timeout: timeout ?? connectionTimeout)
+	}
 }

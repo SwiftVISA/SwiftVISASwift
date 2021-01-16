@@ -9,15 +9,24 @@ import Foundation
 import CoreSwiftVISA
 import Socket
 
+/// A class representing a connection over TCPIP.
 class TCPIPSession {
 	/// The socket used for communicating with the instrument.
 	var socket: Socket
-	
+	/// The address of the instrument.
 	let address: String
+	/// The port of the instrument.
 	let port: Int
 	
 	typealias Error = TCPIPInstrument.Error
-	
+	/// Creates a session to an instrument at the given address and port.
+	///
+	/// The function will throw a timeout error after `timeout` number of seconds have elapsed.
+	/// - Parameters:
+	///   - address: The IPv4 or IPv6 address of the instrument to connect to.
+	///   - port: The port to connect to.
+	///   - timeout: The maximum amout of time to try to connect to the instrument.
+	/// - Throws: If an error occured while establishing the session.
 	init(address: String, port: Int, timeout: TimeInterval) throws {
 		try socket = Self.rawSocket(atAddress: address, port: port, timeout: timeout)
 		
@@ -26,6 +35,7 @@ class TCPIPSession {
 	}
 }
 
+// MARK:- Raw Sockets
 extension TCPIPSession {
 	private static func rawSocket(
 		atAddress address: String,
@@ -64,6 +74,7 @@ extension TCPIPSession {
 	}
 }
 
+// MARK:- Session
 extension TCPIPSession: Session {
 	func close() {
 		// Close the connection to the socket because we will no longer need it.
@@ -71,6 +82,7 @@ extension TCPIPSession: Session {
 	}
 	
 	func reconnect(timeout: TimeInterval) throws {
+		socket.close()
 		try socket = Self.rawSocket(atAddress: address, port: port, timeout: timeout)
 	}
 }

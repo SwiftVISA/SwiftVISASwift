@@ -13,7 +13,6 @@ final class TCPIPCommunicatorTests: XCTestCase {
 															port: Self.lanInfo.port,
 															timeout: 5.0)
 	}
-	
 	/// Tests writing to the instrument.
 	///
 	/// The write command sould not throw an error. Further, the instrument's output should turn on.
@@ -27,7 +26,6 @@ final class TCPIPCommunicatorTests: XCTestCase {
 			XCTFail("Failed to write \"\(command)\" with error: \(error)")
 		}
 	}
-	
 	/// Tests reading from the instrument.
 	///
 	/// The write and read commands should not throw an error.
@@ -41,7 +39,6 @@ final class TCPIPCommunicatorTests: XCTestCase {
 			XCTFail("Failed to read \"\(command)\" with error: \(error)")
 		}
 	}
-	
 	/// Tests reading from the instrument when it should not be able to.
 	///
 	/// The command specified is write-only, so the read operation should fail and throw an error. The write operation should not throw an error.
@@ -63,7 +60,7 @@ final class TCPIPCommunicatorTests: XCTestCase {
 			return
 		}
 	}
-	
+	/// Test that the session is actually ended when `close()` is called.
 	func testClose() {
 		let commands = ["VOLTAGE?", "OUTPUT OFF"]
 		
