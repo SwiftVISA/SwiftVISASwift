@@ -10,7 +10,7 @@ let package = Package(
 			targets: ["SwiftVISASwift"]),
 	],
 	dependencies: [
-		.package(path: "../CoreSwiftVISA"),
+		.package(url: "https://github.com/SwiftVISA/CoreSwiftVISA.git", .upToNextMinor(from: "0.1.0")),
 		.package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.0")
 	],
 	targets: [
