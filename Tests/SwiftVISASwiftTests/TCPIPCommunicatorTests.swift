@@ -13,6 +13,13 @@ final class TCPIPCommunicatorTests: XCTestCase {
 															port: Self.lanInfo.port,
 															timeout: 5.0)
 	}
+	/// Tests that the instrument was successfully connected to.
+	func testInstrumentConnected() {
+		if Self.communicator == nil {
+			XCTFail("Failed to connect to instrument")
+		}
+	}
+	
 	/// Tests writing to the instrument.
 	///
 	/// The write command sould not throw an error. Further, the instrument's output should turn on.
