@@ -4,14 +4,15 @@ import XCTest
 /// Tests for communicating with a Keysight E36103B Oscilliscope over TCPIP.
 final class TCPIPCommunicatorTests: XCTestCase {
 	/// The communicator to use for the tests.
-	static var communicator: TCPIPInstrument?
+	static var communicator: MessageBasedInstrument?
 	/// The LAN information for the instrument.
 	static var lanInfo = (address: "169.254.10.1", port: 5025)
 	
 	override class func setUp() {
-		communicator = try? .init(address: Self.lanInfo.address,
-															port: Self.lanInfo.port,
-															timeout: 5.0)
+		let im = InstrumentManager.shared
+		communicator = try? im.instrumentAt(address: lanInfo.address,
+																				port: lanInfo.port,
+																				timeout: 5.0)
 	}
 	/// Tests that the instrument was successfully connected to.
 	func testInstrumentConnected() {
