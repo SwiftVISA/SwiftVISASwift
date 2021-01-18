@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Error Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Enum/Error" class="dashAnchor"></a>
+    <a title="Error Enumeration Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../../index.html"> Docs</a> (66% documented)</p>
+        <p class="header-right">
+          <form role="search" action="../../search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../../index.html"> Reference</a>
+        <img id="carat" src="../../img/carat.png" />
+        Error Enumeration Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../Classes/TCPIPInstrument.html">TCPIPInstrument</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../../Classes/TCPIPInstrument/Error.html">– Error</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../../Extensions/InstrumentManager.html">InstrumentManager</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>Error</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Error</span> <span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span></code></pre>
+
+                </div>
+              </div>
+            <p>An error associated with a <code>TCPIPCommunicator</code>.</p>
+
+<ul>
+<li><code>couldNotCreateSocket</code>: The socket to communicate with the instrument could not be created.</li>
+<li><code>couldNotConnect</code>: The instrument could not be connected to. The instrument may not be connected, or could have a different address/port than the one specified.</li>
+<li><code>couldNotSetTimeout</code>: The timeout value could not be set.</li>
+<li><code>couldNotEnableBlocking</code>: The socket was unable to enable blocking.</li>
+<li><code>failedWriteOperation</code>: The communicator could not write to the instrument.</li>
+<li><code>failedReadOperation</code>: The communicator could not read from the instrument.</li>
+<li><code>couldNotDecode</code>: The communicator could not decode the data sent from the instrument.</li>
+</ul>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO20couldNotCreateSocketyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/couldNotCreateSocket" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO20couldNotCreateSocketyA2EmF">couldNotCreateSocket</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">couldNotCreateSocket</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO15couldNotConnectyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/couldNotConnect" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO15couldNotConnectyA2EmF">couldNotConnect</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">couldNotConnect</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO18couldNotSetTimeoutyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/couldNotSetTimeout" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO18couldNotSetTimeoutyA2EmF">couldNotSetTimeout</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">couldNotSetTimeout</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO22couldNotEnableBlockingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/couldNotEnableBlocking" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO22couldNotEnableBlockingyA2EmF">couldNotEnableBlocking</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">couldNotEnableBlocking</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO20failedWriteOperationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/failedWriteOperation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO20failedWriteOperationyA2EmF">failedWriteOperation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">failedWriteOperation</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO19failedReadOperationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/failedReadOperation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO19failedReadOperationyA2EmF">failedReadOperation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">failedReadOperation</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO14couldNotDecodeyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/couldNotDecode" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO14couldNotDecodeyA2EmF">couldNotDecode</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">couldNotDecode</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO20localizedDescriptionSSvp"></a>
+                    <a name="//apple_ref/swift/Property/localizedDescription" class="dashAnchor"></a>
+                    <a class="token" href="#/s:14SwiftVISASwift15TCPIPInstrumentC5ErrorO20localizedDescriptionSSvp">localizedDescription</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">localizedDescription</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2021-01-18)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

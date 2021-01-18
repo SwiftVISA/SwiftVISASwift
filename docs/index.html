@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+    <a title="  Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="index.html"> Docs</a> (66% documented)</p>
+        <p class="header-right">
+          <form role="search" action="search.json">
+            <input type="text" placeholder="Search documentation" data-typeahead>
+          </form>
+        </p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="index.html"> Reference</a>
+        <img id="carat" src="img/carat.png" />
+          Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Classes/TCPIPInstrument.html">TCPIPInstrument</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="Classes/TCPIPInstrument/Error.html">– Error</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="Extensions/InstrumentManager.html">InstrumentManager</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            
+            <p><img src="https://github.com/SwiftVISA/CoreSwiftVISA/blob/master/SwiftVISA%20Logo.png" width="512" height="512"></p>
+<h1 id='swiftvisaswift' class='heading'>SwiftVISASwift</h1>
+
+<p>SwiftVISASwift allows for message based communication over the VISA protocol for TCPIP instruments. SwiftVISASwift is a native backend and does not require the user to have NI-VISA installed.</p>
+<h2 id='requirements' class='heading'>Requirements</h2>
+
+<ul>
+<li>Swift 5.0+</li>
+<li>macOS 10.11.6+</li>
+<li>Ubuntu 16.04 (or 16.10 but only tested on 16.04)</li>
+<li>Other versions of Linux <em>may</em> work, but have not been tested</li>
+</ul>
+<h2 id='installation' class='heading'>Installation</h2>
+
+<p>Installation can be done through the <a href="https://swift.org/package-manager/">Swift Package Manager</a>. To use SwiftVISASwift in your project, include the following dependency in your <code>Package.swift</code> file.</p>
+<pre class="highlight swift"><code><span class="nv">dependencies</span><span class="p">:</span> <span class="p">[</span>
+    <span class="o">.</span><span class="nf">package</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="s">"https://github.com/SwiftVISA/SwiftVISASwift.git"</span><span class="p">,</span> <span class="o">.</span><span class="nf">upToNextMinor</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="s">"0.1.0"</span><span class="p">))</span>
+<span class="p">]</span>
+</code></pre>
+
+<p>SwiftVISASwift automatically exports <a href="https://github.com/SwiftVISA/CoreSwiftVISA">CoreSwiftVISA</a>, so <code>import SwiftVISASwift</code> is sufficient for importing CoreSwiftVISA.</p>
+<h2 id='usage' class='heading'>Usage</h2>
+
+<p>To create a connection to an instrument over TCPIP, pass the network details to <code>InstrumentManager.shared.instrumentAt(address:port:)</code>;</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="c1">// Pass the IPv4 or IPv6 address of the instrument to "address" and the insturment's port to "port".</span>
+  <span class="k">let</span> <span class="nv">instrument</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">InstrumentManager</span><span class="o">.</span><span class="n">shared</span><span class="o">.</span><span class="nf">instrumentAt</span><span class="p">(</span><span class="nv">address</span><span class="p">:</span> <span class="s">"10.0.0.1"</span><span class="p">,</span> <span class="nv">port</span><span class="p">:</span> <span class="mi">5025</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not connect to insturment</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>To write to the instrument, call <code>write(_:)</code> on the instrument:</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="c1">// Pass the command as a string.</span>
+  <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="s">"OUTPUT ON"</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not write to insturment</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>To read from the instrument, call <code>read()</code> on the instrument:</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="s">"VOLTAGE?"</span><span class="p">)</span>
+  <span class="k">let</span> <span class="nv">voltage</span> <span class="o">=</span> <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">read</span><span class="p">()</span> <span class="c1">// read() will return a String</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not read from (or write to) insturment</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>To query the instrument, call <code>query(_:)</code> on the instrument. Query will first write the message provided to the instrument, then read from the instrument and return the given string. To decode the message from the instrument into another type, call <code>query(_:as:)</code>:</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="k">let</span> <span class="nv">voltage</span> <span class="o">=</span> <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">query</span><span class="p">(</span><span class="s">"VOLTAGE?"</span> <span class="nv">as</span><span class="p">:</span> <span class="kt">Double</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="c1">// query(_:as:) will return a Double because Double.self was passed to "as".</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not query or decode from insturment</span>
+<span class="p">}</span>
+</code></pre>
+<h2 id='customization' class='heading'>Customization</h2>
+
+<p>SwiftVISASwift supports a great deal of customization for communicating to/from instruments. To customize how SwiftVISASwift sends messages, call <code>write(_:appending:encoding:)</code>. Pass the termination character/string to &ldquo;appending&rdquo;, and pass the string encoding you would like to use to &ldquo;encoding&rdquo;. Both of these parameters have defualt values, so you may ommit parameters that you don&rsquo;t need to customize. By default, the terminating character is &ldquo;/n&rdquo; and the encoding is UTF8:</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="k">let</span> <span class="nv">voltage</span> <span class="o">=</span> <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="s">"OUTPUT OFF"</span><span class="p">,</span> <span class="nv">appending</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="p">,</span> <span class="nv">encoding</span><span class="p">:</span> <span class="o">.</span><span class="n">ascii</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not write to insturment</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>To customize how SwiftVISASwift reads messages, call <code>read(until:strippingTerminator:encoding:chunkSize:)</code>. Pass a custom termination character/string to <code>until</code>. Pass <code>false</code> to <code>strippingTerminator</code> if you would like SwiftVISASwift to keep the terminator on the end of the sting (by default this is removed). Pass the string encoding you would like to use to <code>encoding</code>. <code>chunkSize</code> can be set to limit the number of bytes that is requested from the instrument at a time; for long messages, SwiftVISASwift breaks up the reading into multiple smaller reads. These three parameters all have default values, so you may ommit parameters that you don&rsquo;t need to customize. By default, the terminating character/string is &ldquo;\n&rdquo; and is stripped, the encoding is UTF8, and the chunk size is 1024 bytes:</p>
+<pre class="highlight swift"><code><span class="k">do</span> <span class="p">{</span>
+  <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="s">"VOLTAGE?"</span><span class="p">)</span>
+  <span class="k">let</span> <span class="nv">voltage</span> <span class="o">=</span> <span class="k">try</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">read</span><span class="p">(</span><span class="nv">until</span><span class="p">:</span> <span class="s">"</span><span class="se">\0</span><span class="s">"</span><span class="p">,</span> <span class="nv">strippingTerminator</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span> <span class="nv">encoding</span><span class="p">:</span> <span class="o">.</span><span class="n">ascii</span><span class="p">,</span> <span class="nv">chunkSize</span><span class="p">:</span> <span class="mi">256</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not read from (or write to) instrument</span>
+ <span class="p">}</span>
+</code></pre>
+
+<p>To customize the defaults used for an instrument, you can set the properties on the <code>attributes</code> property of the insturment. The following values can be customized: <code>chunkSize</code>, <code>encoding</code>, <code>operationDelay</code>, <code>readTerminator</code>, and <code>writeTerminator</code>. These attributes correspond to the additional arguments above for <code>read()</code> and <code>write(_:)</code>. The attribute <code>operationDelay</code> is used to customize how much time the computer shoud wait between calls to <code>read()</code> and <code>write(_:)</code>. Some instruments will stop working correctly if messages are sent too quickly so a a small amount of time is waited before sending each message. By deault, this value is 1 ms. Each instrument can have its own custom attributes. Setting the attributes on one instrument will not change the attributes of other insturments:</p>
+<pre class="highlight swift"><code><span class="c1">// Sets the attributes to SwiftVISASwift's default values</span>
+<span class="n">instrument</span><span class="o">.</span><span class="n">chunkSize</span> <span class="o">=</span> <span class="mi">1024</span> <span class="c1">// Set the default chunk size for reading long messages</span>
+<span class="n">insturment</span><span class="o">.</span><span class="n">encoding</span> <span class="o">=</span> <span class="o">.</span><span class="n">utf8</span> <span class="c1">// Set the encoding to use for reading and writing messages</span>
+<span class="n">insturment</span><span class="o">.</span><span class="n">operationDelay</span> <span class="o">=</span> <span class="mf">1e-3</span> <span class="c1">// Set the number of seconds to wait before sending each message</span>
+<span class="n">instrument</span><span class="o">.</span><span class="n">readTerminator</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span> <span class="c1">// Set the character/string that indicates an end of a message from the insturment</span>
+<span class="n">instrument</span><span class="o">.</span><span class="n">writeTermiantor</span> <span class="o">=</span> <span class="s">"</span><span class="se">\n</span><span class="s">"</span> <span class="c1">// Set the character/string that indicates an end of the message to the insturment</span>
+</code></pre>
+
+<p>To customize how SwiftVISASwift decodes types, you can create your own custom decoders. To create a custom decoder, create a struct that conforms to the <code>MessageDecoder</code> protocol. You will need to declare the type you wish to decode to as <code>DeccodingType</code>, and you will need to implement <code>decode(_:)</code>:</p>
+<pre class="highlight swift"><code><span class="c1">// The following decoder returns an Int rounded to the nearest interger:</span>
+<span class="kd">struct</span> <span class="kt">RoundingDecoder</span><span class="p">:</span> <span class="kt">MessageDecoder</span> <span class="p">{</span>
+  <span class="kd">typealias</span> <span class="kt">DecodingType</span> <span class="o">=</span> <span class="kt">Int</span>
+
+  <span class="c1">// Define an Error enum if you would like to throw custom errors</span>
+  <span class="kd">enum</span> <span class="kt">Error</span><span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="n">notANumber</span>
+     <span class="k">case</span> <span class="n">magnitudeTooLarge</span>
+  <span class="p">}</span>
+
+  <span class="kd">func</span> <span class="nf">decode</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">DecodingType</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">number</span> <span class="o">=</span> <span class="kt">Double</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// If the message can't be converted into a Double, then it's not a number</span>
+      <span class="k">throw</span> <span class="kt">Error</span><span class="o">.</span><span class="n">notANumber</span>
+    <span class="p">}</span>
+    <span class="k">guard</span> <span class="o">!</span><span class="n">number</span><span class="o">.</span><span class="n">isNaN</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// If the number is NAN, then it's not a number</span>
+      <span class="k">throw</span> <span class="kt">Error</span><span class="o">.</span><span class="n">notANumber</span>
+    <span class="p">}</span>
+
+    <span class="k">let</span> <span class="nv">rounded</span> <span class="o">=</span> <span class="nf">round</span><span class="p">(</span><span class="n">number</span><span class="p">)</span>
+
+    <span class="k">guard</span> <span class="k">let</span> <span class="nv">integer</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="nv">exactly</span><span class="p">:</span> <span class="n">rounded</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="c1">// If the number can't be expressed exaclty as an integer after rounding, it's magnitude is too large</span>
+      <span class="k">throw</span> <span class="kt">Error</span><span class="o">.</span><span class="n">magnitudeTooLarge</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">integer</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>Included with SwiftVISASwift (actually in CoreSwiftVISA) are four default decoders: <code>DefaultStringDecoder</code>, <code>DefaultIntDecoder</code>, <code>DefaultDoubleDecoder</code>, and <code>DefaultBoolDecoder</code>. When decoding when calling query, if no decoder is passed in, one of the decoders aboved will be automatically used (depending on which type is used). To change which decoder will be used automatically, you can set the <code>customDecode</code> property to be a custom decoding function on <code>DefaultStringDecoder</code>, <code>DefaultIntDecoder</code>, <code>DefaultDoubleDecoder</code>, or <code>DefaultBoolDecoder</code>:</p>
+<pre class="highlight swift"><code><span class="c1">// Set default decoder</span>
+<span class="kt">DefaultIntDecoder</span><span class="o">.</span><span class="n">customDecode</span> <span class="o">=</span> <span class="kt">RoundingDecoder</span><span class="p">()</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="nv">_</span><span class="p">:)</span>
+<span class="k">do</span> <span class="p">{</span>
+  <span class="k">let</span> <span class="nv">voltage</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">query</span><span class="p">(</span><span class="s">"VOLTAGE?"</span><span class="p">,</span> <span class="nv">as</span><span class="p">:</span> <span class="kt">Int</span><span class="o">.</span><span class="k">self</span><span class="p">)</span>
+  <span class="c1">// Can also use a custom decoder without changing the default decoder</span>
+  <span class="k">let</span> <span class="nv">sameVoltage</span> <span class="o">=</span> <span class="n">instrument</span><span class="o">.</span><span class="nf">query</span><span class="p">(</span><span class="s">"VOLTAGE?"</span><span class="p">,</span> <span class="nv">as</span><span class="p">:</span> <span class="kt">Int</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="n">using</span> <span class="kt">RoundingDecoder</span><span class="p">())</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+  <span class="c1">// Could not query or decode</span>
+<span class="p">}</span>
+</code></pre>
+
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2021 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2021-01-18)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.6</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
