@@ -27,13 +27,15 @@ public final class TCPIPInstrument {
 	///   - timeout: The maximum time to wait before timing out when communicating with the instrument.
 	///
 	/// - Throws: An error if a socket could not be created, connected, or configured properly.
-	public init(address: String, port: Int, timeout: TimeInterval) throws {
-		try _session = TCPIPSession(address: address, port: port, timeout: timeout)
+	public init(address: String, port: Int, timeout: TimeInterval) async throws {
+		_session = try await TCPIPSession(address: address, port: port, timeout: timeout)
 	}
 	
 	deinit {
 		// Close the connection because we will no longer need it.
-		try? session.close()
+    Task {
+      try? await session.close()
+    }
 	}
 }
 
@@ -44,20 +46,20 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		strippingTerminator: Bool,
 		encoding: String.Encoding,
 		chunkSize: Int
-	) throws -> String {
+	) async throws -> String {
 		// The message may not fit in a single chunk. To overcome this, we continue to request data until we are at the end of the message.
 		// Continue until `string` ends in the terminator.
 		var string = String()
 		var chunk = Data(capacity: chunkSize)
 		
-		_session.socket.readBufferSize = chunkSize
+		await _session.socket.readBufferSize = chunkSize
 		
 		repeat {
 			do {
 				let bytesRead: Int
 				do {
 					usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-					bytesRead = try _session.socket.read(into: &chunk)
+					bytesRead = try await _session.socket.read(into: &chunk)
 				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 					throw Error.couldNotConnect
 				} catch {
@@ -95,17 +97,17 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		return string
 	}
 	
-	public func readBytes(length: Int, chunkSize: Int) throws -> Data {
+	public func readBytes(length: Int, chunkSize: Int) async throws -> Data {
 		var data = Data(capacity: max(length, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
-		_session.socket.readBufferSize = chunkSize
+		await _session.socket.readBufferSize = chunkSize
 		
 		repeat {
 			let bytesRead: Int
 			do {
 				usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-				bytesRead = try _session.socket.read(into: &chunk)
+				bytesRead = try await _session.socket.read(into: &chunk)
 			} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 				throw Error.couldNotConnect
 			} catch {
@@ -128,17 +130,17 @@ extension TCPIPInstrument: MessageBasedInstrument {
 		until terminator: Data,
 		strippingTerminator: Bool,
 		chunkSize: Int
-	) throws -> Data {
+	) async throws -> Data {
 		var data = Data(capacity: max(maxLength ?? chunkSize, chunkSize))
 		var chunk = Data(capacity: chunkSize)
 		
-		_session.socket.readBufferSize = chunkSize
+		await _session.socket.readBufferSize = chunkSize
 		
 		repeat {
 			let bytesRead: Int
 			do {
 				usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-				bytesRead = try _session.socket.read(into: &chunk)
+				bytesRead = try await _session.socket.read(into: &chunk)
 			} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 				throw Error.couldNotConnect
 			} catch {
@@ -173,20 +175,43 @@ extension TCPIPInstrument: MessageBasedInstrument {
 	public func write(_ string: String,
 										appending terminator: String?,
 										encoding: String.Encoding
-	) throws -> Int {
-		try (string + (terminator ?? ""))
-			.cString(using: encoding)?
+	) async throws -> Int {
+		guard let cString = (string + (terminator ?? "")).cString(using: encoding) else {
+      throw Error.couldNotMakeCString
+    }
+    
+    // Have to copy the buffer for now because Array.withUnsafeBufferPointer() is not async
+    var mutableBuffer: UnsafeMutableBufferPointer<CChar>! = nil
+      
+    cString
 			.withUnsafeBufferPointer() { buffer -> () in
-				// The C String includes a null terminated byte -- we will discard this
-				do {
-					usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-					try _session.socket.write(from: buffer.baseAddress!, bufSize: buffer.count - 1)
-				} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
-					throw Error.couldNotConnect
-				} catch {
-					throw Error.failedWriteOperation
-				}
+        mutableBuffer = UnsafeMutableBufferPointer<CChar>.allocate(capacity: buffer.count)
+        
+        var sourceBase = buffer.baseAddress!
+        var destinationBase = mutableBuffer.baseAddress!
+        
+        for _ in 0..<buffer.count {
+          destinationBase.pointee = sourceBase.pointee
+          sourceBase = sourceBase.successor()
+          destinationBase = destinationBase.successor()
+        }
 			}
+    
+    defer {
+      mutableBuffer.deallocate()
+    }
+    
+    let buffer = UnsafeBufferPointer.init(start: mutableBuffer.baseAddress, count: mutableBuffer.count)
+    
+    do {
+      usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
+      // The C String includes a null terminated byte -- we will discard this
+      try await _session.socket.write(from: buffer.baseAddress!, bufSize: buffer.count - 1)
+    } catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
+      throw Error.couldNotConnect
+    } catch {
+      throw Error.failedWriteOperation
+    }
 		
 		// TODO: Is string.count always equal to the number of bytes?
 		// Will always write all bytes or will throw
@@ -196,11 +221,11 @@ extension TCPIPInstrument: MessageBasedInstrument {
 	public func writeBytes(
 		_ data: Data,
 		appending terminator: Data?
-	) throws -> Int {
+	) async throws -> Int {
 		let data = data + (terminator ?? Data())
 		do {
 			usleep(useconds_t(attributes.operationDelay * 1_000_000.0))
-			try _session.socket.write(from: data)
+			try await _session.socket.write(from: data)
 		} catch where (error as? Socket.Error)?.errorCode == Int32(Socket.SOCKET_ERR_BAD_DESCRIPTOR) {
 			throw Error.couldNotConnect
 		} catch {
@@ -231,6 +256,7 @@ extension TCPIPInstrument {
 		case failedWriteOperation
 		case failedReadOperation
 		case couldNotDecode
+    case couldNotMakeCString
 	}
 }
 
@@ -252,6 +278,8 @@ extension TCPIPInstrument.Error {
 			return "Failed read operation"
 		case .couldNotDecode:
 			return "Could not decode"
+    case .couldNotMakeCString:
+      return "Could not make CString"
 		}
 	}
 }
@@ -269,8 +297,8 @@ extension InstrumentManager {
 		address: String,
 		port: Int,
 		timeout: TimeInterval? = nil
-	) throws -> MessageBasedInstrument {
-		return try TCPIPInstrument(address: address,
+	) async throws -> MessageBasedInstrument {
+		return try await TCPIPInstrument(address: address,
 															 port: port,
 															 timeout: timeout ?? connectionTimeout)
 	}
