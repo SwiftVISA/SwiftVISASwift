@@ -6,17 +6,16 @@ SwiftVISASwift allows for message based communication over the VISA protocol for
 
 ## Requirements
 
-- Swift 5.0+
-- macOS 10.11.6+
-- Ubuntu 16.04 (or 16.10 but only tested on 16.04)
-- Other versions of Linux *may* work, but have not been tested
+- Swift 5.5+
+- macOS 12.0+
+- Linux *may* work, but it has not been tested.
 
 ## Installation
 
 Installation can be done through the [Swift Package Manager](https://swift.org/package-manager/). To use SwiftVISASwift in your project, include the following dependency in your `Package.swift` file.
 ```swift
 dependencies: [
-    .package(url: "https://github.com/SwiftVISA/SwiftVISASwift.git", .upToNextMinor(from: "0.1.0"))
+    .package(url: "https://github.com/SwiftVISA/SwiftVISASwift.git", .branch("actor"))
 ]
 ```
 

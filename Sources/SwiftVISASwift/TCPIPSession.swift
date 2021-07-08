@@ -53,8 +53,9 @@ extension TCPIPSession {
 		socket.readBufferSize = 1024
 		
 		do {
-			// TODO: We might need to specify a timeout value here. It says adding a timeout can put it into non-blocking mode, and I'm not sure What that will do.
       try socket.connect(to: address, port: Int32(port), timeout: UInt(timeout * 1_000))
+      usleep(useconds_t(1_000_000 * timeout))
+      
 		} catch { throw Error.couldNotConnect }
 		
 		do {
