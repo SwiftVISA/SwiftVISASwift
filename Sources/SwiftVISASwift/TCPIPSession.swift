@@ -13,10 +13,15 @@ import Socket
 actor TCPIPSession {
 	/// The socket used for communicating with the instrument.
 	var socket: Socket
-	/// The address of the instrument.
+	
+  /// The address of the instrument.
 	let address: String
+  
 	/// The port of the instrument.
 	let port: Int
+  
+  /// `true` if the session is closed.
+  private var isClosed = false
 	
 	typealias Error = TCPIPInstrument.Error
 	/// Creates a session to an instrument at the given address and port.
@@ -76,12 +81,15 @@ extension TCPIPSession {
 // MARK:- Session
 extension TCPIPSession: Session {
 	func close() async {
-		// Close the connection to the socket because we will no longer need it.
-		socket.close()
+    if !isClosed {
+      socket.close()
+      isClosed = true
+    }
 	}
 	
 	func reconnect(timeout: TimeInterval) async throws {
-		socket.close()
+		await close()
 		socket = try await Self.rawSocket(atAddress: address, port: port, timeout: timeout)
+    isClosed = false
 	}
 }
