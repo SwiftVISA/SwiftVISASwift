@@ -7,7 +7,7 @@ final class TCPIPCommunicatorTests: XCTestCase {
 	static var communicator: MessageBasedInstrument?
   
 	/// The LAN information for the instrument.
-	static var lanInfo = (address: "169.254.10.1", port: 5025)
+	static var lanInfo = (address: "192.168.1.4", port: 5025)
   
   override class func setUp() {
     unsafeWaitFor {
