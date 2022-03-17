@@ -56,7 +56,7 @@ The 'SwiftVISASwift' package is broken into four sub-implementations to provide 
 
 The figure below shows how these implementations work together and provide options to developers based upon their needs.  `SwiftVISA` and `NISwiftVISA` still depend on the pre-compiled `NI-VISA` framework and provides access to GPIB, USB, and TCI/IP communication.  However, since they ultimately rely on `NI-VISA`, they are limited to x86 systems and, at the time of this writing, to macOS 11 and below (National Instruments hasn't yet released `NI-VISA` that works on macOS 12 yet.  The `SwiftVISASwift` package uses the underlying `CoreSwiftVISA` package to provide a pure Swift implementation that works on x86 and ARM processors and is compatible with macOS 12.  However, only TCI/IP communcation has been implemented for `SwiftVISASwift` due to limitations applied to the `kext` currently used to communicate with USB devices.
 
-![Schematic showing how the implementions integrate together](Figures_SwiftVISA/Organization.jpg)
+![Schematic showing how the implementions integrate together\label{fig:example}](Figures_SwiftVISA/Organization.jpg)
 
 
 `CoreSwiftVISA` is a low-level package that provides a base, underlying implementation of SwiftVISA, excluding the communication implementation portion (i.e. TCI/IP, USB, etc.).  This includes defining base types and protocols.  `CoreSwiftVISA` isn't directly used, instead, it is used by higher-level packages, such as `SwiftVISASwift` and `NISwiftVISA`.  Breaking the core components out into a separate package makes it simpler to abstract away implementation details.  This can be used to create custom backends for SCPI-compliant instruments or other types of instruments. 
