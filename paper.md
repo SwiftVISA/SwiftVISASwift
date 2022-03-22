@@ -18,14 +18,12 @@ authors:
     affiliation: 1
   - name: Owen Hildreth^[corresponding author]
     orcid: 0000-0001-5358-9080
-    affiliation: 3
+    affiliation: 1
 affiliations:
-  - name: Department of Computer Science, Colorado School of Mines
+  - name: Colorado School of Mines
  	index: 1
   - name: Consolidated Analysis Center, Incorporated
     index: 2
-  - name: Department of Mechanical Engineering, Colorado School of Mines
-  	index: 3
 date: 11 November 2021
 bibliography: bibliography.bib
 
