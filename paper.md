@@ -21,7 +21,7 @@ authors:
     affiliation: 1
 affiliations:
   - name: Colorado School of Mines
- 	index: 1
+    index: 1
   - name: Consolidated Analysis Center, Incorporated
     index: 2
 date: 11 November 2021
