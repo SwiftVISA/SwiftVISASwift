@@ -59,7 +59,7 @@ The figure below shows how these implementations work together and provide optio
 
 `CoreSwiftVISA` is a low-level package that provides a base, underlying implementation of SwiftVISA, excluding the communication implementation portion (i.e. TCI/IP, USB, etc.).  This includes defining base types and protocols.  `CoreSwiftVISA` isn't directly used, instead, it is used by higher-level packages, such as `SwiftVISASwift` and `NISwiftVISA`.  Breaking the core components out into a separate package makes it simpler to abstract away implementation details.  This can be used to create custom backends for SCPI-compliant instruments or other types of instruments. 
 
-`SwiftVISASwift` uses `CoreSwiftVISA` types and protocols and implements communication over TCI/IP instruments.  This is a pure Swift, native backend that does not require installation of the VISA or NI-VISA frameworks.  `SwiftVISASwift` is currently limited to communicating with TCI/IP instruments because communication on iOS and macOS devices now requires signed drivers.  While it is possible to use older USB drivers, macOS has started restricting kexts and breaking out the implementation into those that did and didn't require signed drivers was considered more future-proof.
+`SwiftVISASwift` uses `CoreSwiftVISA` types and protocols and implements communication over TCI/IP instruments.  This is a pure Swift, native backend that does not require installation of the VISA or NI-VISA frameworks.  `SwiftVISASwift` is currently limited to communicating with TCI/IP instruments using the IPAddress:SOCKET configuration.  It does not yet implement VX11.  While we are working on implementing USB support, progress is slow because communication on iOS and macOS devices now requires signed drivers.  While it is possible to use older USB drivers, macOS has started restricting kexts and breaking out the implementation into those that did and didn't require signed drivers was considered more future-proof.
 
 `NISwiftVISA` allows for communicating over USB instruments.  This implementation does use the `NI-VISA C` backend and requires that users have `NI-VISA` 20.0 or later installed.  Additionally, users must install `NISwiftVISAService`.[@GH_NISwiftVISAService]  The `NISwiftVISAService` is a process that runs in the background that allows the NISwiftVISA framework to communicate with `NI-VISA`'s `C` framework. This service is necessary because NI only distributes pre-compiled binaries of its NI-VISA framework and, at we wrote NISwiftVISA, Swift Packages did not support dependencies on pre-compiled binaries within a package.  While Swift 5.3 introduced dependencies for binary dependencies, they were limited to XCFrameworks.  NI-VISA is not an XCFramework.  To circumvent this requirement, the `NISwiftVISA` uses interprocess communication that calls the `NISwiftVISAService`, which handles all communicates to the instruments.  `NISwiftVISA` works well on macOS systems, but is not compatible with iOS systems.  Additionally, unless the NI-VISA framework is updated to a universal framework, it will run under ARM systems (e.g. Apple Silicon) through Apple's Rosetta 2 dynamic binary translator.  Just as Apple's Rosetta 1 translator was eventually Obsolete and unavailable, we can expect Rosetta 2 to also be phased out eventually.
 
@@ -105,17 +105,71 @@ To read from the instrument, call `read()` on the instrument:
 		// Handle the error
 	}
 
+The `actor` branch of `SwiftVISASwift` is designed to support Swift 5.5's concurrency features.  This allows users to easily send connect and communicate with instruments without blocking the main thread.  For example, the code below createing a new Message Based Instrument is asyncronous because the underlying `TCPIPSession` in `SwiftVISASwift` is marked as an `actor` and all instrument creation ultimately uses a `TCPIPSession` to setup the communcation between the application and the device.  This small, easy to implment change, reduces a lot of UI hangups if the device isn't connect or configured correctly.   The code shows how to asynchronously instantiate a new Message Based Instrument.  Doing this asynchronously means that the main thread will not be tied up during the timeout period if, for instance, the device wasn't connected or powered on or configured properly.  
+
+	func makeInstrument() async throws -> MessageBasedInstrument {
+	    var instrument = try await InstrumentManager.shared.instrumentAt(
+	      address: address,
+	      port: port,
+	      timeout: timeout
+	    )
+	    instrument.attributes = attributes
+	    return instrument
+	  }
+
+Extended this asynchronous behavior to your own custom instrument controllers is also simply a matter of marking your controllers as an `actor` instead of a class.  Using a waveform generator as and example, the code below creates a `WaveformController` marked as a `public actor` and then an extension is added to read and set the waveform generator's voltage.  Using an actor instead of a class ensures that 
+
+	public actor WaveformController {
+	  var instrument: MessageBasedInstrument
+	  
+	  init(instrument: MessageBasedInstrument) {
+	    self.instrument = instrument
+	  }
+	}
+	
+	
+	extension WaveformController {
+	  var rawVoltage: Double {
+	    get async throws {
+	      try await instrument.query("VOLT?", as: Double.self)
+	    }
+	  }
+	
+	  func setRawVoltage(to voltage: Double) async throws {
+	    try await instrument.write("VOLT \(voltage)")
+	  }
+	}
+
 # Example Applications
 
-Internally, we've been using `SwiftVISA` and `SwiftVISASwift` for a few years now to control various laboratory hardware. Resistivity Utility is an example application written with `SwiftVISASwift` to control an Agilent Nanovolt meter connected to a custom 4-point probe station.  This simple application lets us document our measurements, apply the appropriate geoemtry corrections for resistivy calculations, and export both the raw and summarized data to csv files.[@GH_resistiv]
+Internally, we've been using `SwiftVISA` and `SwiftVISASwift` for a few years now to control various laboratory hardware. Resistivity Utility is an example application written with `SwiftVISA` to control an Agilent Nanovolt meter connected to a custom 4-point probe station.  This simple application lets us document our measurements, apply the appropriate geoemtry corrections for resistivy calculations, and export both the raw and summarized data to csv files.[@GH_resistiv]
 
 ![Screenshot of Resistivity Utility](Figures_SwiftVISA/Resitivity_1.jpg)
 ![Screenshot of Resistivity Utility](Figures_SwiftVISA/Resitivity_2.jpg)
 ![Screenshot of Resistivity Utility](Figures_SwiftVISA/Resitivity_3.jpg)
 
+# Current Limitations and Future Work
+`SwiftVISA` and `NISwiftVISA` have many of the features available to `pyVISA` and NI-VISA, with the following known exceptions: 
+
+* The `list_resources` function available in `pyVISA` is currently not supported
+* Direct GPIB connections and communications have not be implemented or tested.  However, we have used GPIP-to-USB converters to communicate and control legacy GPIB devices
+* Communication using HiSLIP has not been tested or confirmed
+
+Since `SwiftVISASwift` is still a young effort and currently only works with `TCPIP::SOCKET`.  In the near future, we plan to:
+
+* Implement USB communication
+* Implement a `listResources` function equivalent to pyVISA's `list_resources` function
+* Implement VX11 communication and resource addresses
+
+The long-term plans listed below would require help from the broader community.
+
+* Testing HiSLIP communication
+* Support `PXIInstrument`
+* Support `VXIInstrument`
+
+There are no plans in `SwiftVISASwift` to directly support `FirewireInstrument` given that this legacy connection is not in widespread use.
 
 # Acknowledgements
 We would like to acknowledge the financial support we received from the National Science Foundation (Award #: CAREER 401756).
 
 # References
-
