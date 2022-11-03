@@ -165,7 +165,9 @@ Extending this asynchronous behavior to your own custom instrument controllers i
 Internally, we've been using `SwiftVISA` and `SwiftVISASwift` for a few years now to control various laboratory hardware. Resistivity Utility is an example application written with `SwiftVISA` to control an Agilent Nanovolt meter connected to a custom 4-point probe station.  This simple application lets us document our measurements, apply the appropriate geometry corrections for resistivity calculations, and export both the raw and summarized data to csv files.[@GH_resistiv]
 
 ![Screenshot of Resistivity Utility](Figures_SwiftVISA/Resitivity_1.jpg)
+
 ![Screenshot of Resistivity Utility](Figures_SwiftVISA/Resitivity_2.jpg)
+
 ![Screenshot of Resistivity Utility](Figures_SwiftVISA/Resitivity_3.jpg)
 
 # Current Limitations and Future Work
