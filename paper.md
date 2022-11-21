@@ -188,7 +188,10 @@ The long-term plans listed below would require help from the broader community.
 * Support `PXIInstrument`
 * Support `VXIInstrument`
 
-We currently have no plans to update the `SwiftVISA` repositories to directly support `GPIBInstrument` or `FirewireInstrument`; however, contributors are welcome to submit pull-requests to add this functionality.  For our own projects, we use GPIB-to-USB and GPIB-to-TCP/IP adapters[@prologix] by Prologix to control our instruments with `SwiftVISA` and `SwiftVISASwift`.  These adapters work well with `SwiftVISA` and `SwiftVISASwift` because they don’t require installation of additional drivers and because the adapter internally translates the GPIB commands for you. 
+We are planning to host an additional Computer Science Field Session Project at Colorado School of Mines in 2023 to expand either `SwiftVISA` or `SwiftVISASwift` to a Swift-supported Linux platform.
+
+We currently have no plans to update the `SwiftVISA` repositories to directly support `GPIBInstrument` or `FirewireInstrument`; however, contributors are welcome to submit pull-requests to add this functionality.  For our own projects, we use GPIB-to-USB and GPIB-to-TCP/IP adapters[@prologix] by Prologix to control our instruments with `SwiftVISA` and `SwiftVISASwift`.  These adapters work well with `SwiftVISA` and `SwiftVISASwift` because they don’t require installation of additional drivers and because the adapter internally translates the GPIB commands for you.
+
 
 # Contributions
 Connor Barnes, Luke Henke, Lorena Henke, and Ivan Krukov wrote the original SwiftVISA framework[@GH_SwiftVISA] wrapping the pre-compiled NI-VISA framework[@NI-VISA_download] with Owen Hildreth supervising their work.  Connor Barnes continued to work and develop the rest of the frameworks, services, and Swift packages in the SwiftVISA organization.  Owen Hildreth continues to supervise the work and maintain the repositories.
