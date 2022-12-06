@@ -88,8 +88,8 @@ do {
 ```swift
 // Sets the attributes to SwiftVISASwift's default values
 instrument.chunkSize = 1024 // Set the default chunk size for reading long messages
-insturment.encoding = .utf8 // Set the encoding to use for reading and writing messages
-insturment.operationDelay = 1e-3 // Set the number of seconds to wait before sending each message
+instrument.encoding = .utf8 // Set the encoding to use for reading and writing messages
+instrument.operationDelay = 1e-3 // Set the number of seconds to wait before sending each message
 instrument.readTerminator = "\n" // Set the character/string that indicates an end of a message from the insturment
 instrument.writeTermiantor = "\n" // Set the character/string that indicates an end of the message to the insturment
 ```
@@ -140,6 +140,68 @@ do {
   // Could not query or decode
 }
 ```
+
+## Example Setup Video
+The SwiftVISASwift repository includes an example command-line application that connects to a Keysight E36103B Power Supply over TCP/IP.  This is a good starting point to learn the basics of setting up and using SwiftVISASwift.  Below is a link to a video showing how that project was made so you can follow along yourself.
+https://www.youtube.com/watch?v=xtMUPxH92GI
+
+### ExampleSwiftVISASwift code:
+    
+    import Foundation
+    import SwiftVISASwift
+    
+    print("Starting Example")
+    
+    let ipAddress = "169.254.10.1"
+    let port = 5025
+    
+    var instrumentManager: InstrumentManager?
+    var instrument: MessageBasedInstrument?
+    
+    func makeInstrument() throws {
+        if instrumentManager == nil {
+            instrumentManager = InstrumentManager.shared
+        }
+    
+        instrument = try instrumentManager?.instrumentAt(address: ipAddress, port: port)
+    }
+    
+    func getInfo() {
+        do {
+            let details = try instrument?.query("*IDN?") ?? ""
+            print(details)
+        } catch  {
+           print("Cound not get instrument information")
+           print(error)
+        }
+    }
+
+    func updateMeasuredVoltage() {
+        do {
+            let measuredVoltage = try instrument?.query("SOURCE:VOLTAGE?", as: Double.self)
+            print("Measured Voltage = \(String(describing: measuredVoltage))")
+        } catch  {
+            print("Could not measure voltage")
+            print(error)
+        }
+    }
+
+    func connect() {
+        do {
+            try makeInstrument()
+        } catch  {
+            print("Could not connect to instrument at: \(ipAddress) on port: \(port)")
+            print(error)
+            return
+        }
+    
+       print("instrument conenected: \(String(describing: instrument))")
+        updateMeasuredVoltage()
+        getInfo()
+    }
+    
+    connect()
+
 
 ## Contributions and Comments
 This project is a slow-moving "labor-of-love" for our group and intended additional features, such as USB support, are worked on sporatically based upon need, time, and our ability to deal with Apple's poor documentation.  We would love help and please e-mail me (or to reply to the relevant issue or open a new one).
