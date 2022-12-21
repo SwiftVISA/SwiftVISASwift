@@ -25,28 +25,28 @@ SwiftVISASwift automatically exports [CoreSwiftVISA](https://github.com/SwiftVIS
 Installation can also be done using Xcode's built-in support for adding Swift Package Dependencies.  An example using Xcode 14.2 is as follows:
 
 First, navigate to the SwiftVISASwift Github page and copy the URL SwiftVISASwift source:
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_1_github.png" width="374" height="320">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_1_github.png" width="748" height="640">
 
 
 Second, start a new Xcode project:
 
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_2_createNewProject.png" width="457" height="286">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_2_createNewProject.png" width="914" height="578">
 
 Third, select the type of application.  SwiftVISASwift has been verified to work on macOS and App, Document App, and Command Line Utilites:
 
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_3_selectAppType.png" width="378" height="253">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_3_selectAppType.png" width="756" height="506">
 
 Fourth, naviate to the Project → Package Dependencies and select "+" to begin adding the package dependency:
 
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_4_startPackageDependency.png" width="378" height="253">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_4_startPackageDependency.png" width="756" height="506">
 
 Fifth, paste the URL to the SwiftVISASwift source copied earlier from Github:
 
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_5_addSwiftVISASwiftPackage.png" width="378" height="253">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_5_addSwiftVISASwiftPackage.png" width="756" height="506">
 
 Sixth and last, check your Signings and Capabilities by navigating to Targets → Signings and Capabilities.  The easiest settings to use are #Automatically manage Signing# set to _Yes/Checked_ and #Signing Certificate# to _Sign to Run Locally_.  Other settings can be used if you have an Apple ID Developer Account and Certificate:
 
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_6_signingAndPermissions.png" width="378" height="253">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_6_signingAndPermissions.png" width="756" height="506">
 
 ## Usage
 
