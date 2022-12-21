@@ -25,9 +25,11 @@ SwiftVISASwift automatically exports [CoreSwiftVISA](https://github.com/SwiftVIS
 Installation can also be done using Xcode's built-in support for adding Swift Package Dependencies.  An example using Xcode 14.2 is as follows:
 
 First, navigate to the SwiftVISASwift Github page and copy the URL SwiftVISASwift source:
-<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_1_github.png" width="598" height="512">
+<img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_1_github.png" width="374" height="320">
+
 
 Second, start a new Xcode project:
+
 <img src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_2_createNewProject.png" width="457" height="286">
 
 Third, select the type of application.  SwiftVISASwift has been verified to work on macOS and App, Document App, and Command Line Utilites:
