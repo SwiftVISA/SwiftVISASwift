@@ -6,8 +6,8 @@ SwiftVISASwift allows for message based communication over the VISA protocol for
 
 ## Requirements
 
-- Swift 5.0+
-- macOS 10.11.6+
+- Swift 5.0+  (Swift 5.5+ required for `actor` branch)
+- macOS 10.11.6+ (macOS 12.0+ required for `actor` branch)
 - Ubuntu 16.04 (or 16.10 but only tested on 16.04)
 - Other versions of Linux *may* work, but have not been tested
 
