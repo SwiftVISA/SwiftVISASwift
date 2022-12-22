@@ -39,12 +39,12 @@ Third, select the type of application.  SwiftVISASwift has been verified to work
 <img style="text-align: center;"
            src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_3_selectAppType.png" width="756" height="506">
 
-Fourth, naviate to the Project → Package Dependencies and select "+" to begin adding the package dependency:
+Fourth, navigate to the Project → Package Dependencies and select "+" to begin adding the package dependency:
 
 <img style="text-align: center;"
            src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_4_startPackageDependency.png" width="756" height="506">
 
-Fifth, paste the URL to the SwiftVISASwift source copied earlier from Github:
+Fifth, paste the URL to the SwiftVISASwift source copied earlier from Github into the upper-right corner's search textfield.  The SwiftVISASwift package should show up on the middle-right list.  Select this package, you can set the branch to either `main` or `actor`.  Currently, `main` branch uses a `Class` as the PrinterController while the `actor` branch uses an `Actor` as the PrinterController.  In our own work, we've switched to using the `actor` branch to better reflect sending and receiving instruments commands can be a blocking action.
 
 <img style="text-align: center;"
            src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_5_addSwiftVISASwiftPackage.png" width="756" height="506">
