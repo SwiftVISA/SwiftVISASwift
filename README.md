@@ -62,7 +62,7 @@ do {
   // Pass the IPv4 or IPv6 address of the instrument to "address" and the insturment's port to "port".
   let instrument = try InstrumentManager.shared.instrumentAt(address: "10.0.0.1", port: 5025)
 } catch {
-  // Could not connect to insturment
+  // Could not connect to instrument
 }
 ```
 
@@ -72,7 +72,7 @@ do {
   // Pass the command as a string.
   try instrument.write("OUTPUT ON")
 } catch {
-  // Could not write to insturment
+  // Could not write to instrument
 }
 ```
 
@@ -82,7 +82,7 @@ do {
   try instrument.write("VOLTAGE?")
   let voltage = try instrument.read() // read() will return a String
 } catch {
-  // Could not read from (or write to) insturment
+  // Could not read from (or write to) instrument
 }
 ```
 
@@ -91,7 +91,7 @@ To query the instrument, call `query(_:)` on the instrument. Query will first wr
 do {
   let voltage = try instrument.query("VOLTAGE?" as: Double.self) // query(_:as:) will return a Double because Double.self was passed to "as".
 } catch {
-  // Could not query or decode from insturment
+  // Could not query or decode from instrument
 }
 ```
 
@@ -102,7 +102,7 @@ SwiftVISASwift supports a great deal of customization for communicating to/from 
 do {
   let voltage = try instrument.write("OUTPUT OFF", appending: "\0", encoding: .ascii)
 } catch {
-  // Could not write to insturment
+  // Could not write to instrument
 }
 ```
 
@@ -116,14 +116,14 @@ do {
  }
  ```
  
- To customize the defaults used for an instrument, you can set the properties on the `attributes` property of the insturment. The following values can be customized: `chunkSize`, `encoding`, `operationDelay`, `readTerminator`, and `writeTerminator`. These attributes correspond to the additional arguments above for `read()` and `write(_:)`. The attribute `operationDelay` is used to customize how much time the computer shoud wait between calls to `read()` and `write(_:)`. Some instruments will stop working correctly if messages are sent too quickly so a a small amount of time is waited before sending each message. By deault, this value is 1 ms. Each instrument can have its own custom attributes. Setting the attributes on one instrument will not change the attributes of other insturments:
+ To customize the defaults used for an instrument, you can set the properties on the `attributes` property of the insturment. The following values can be customized: `chunkSize`, `encoding`, `operationDelay`, `readTerminator`, and `writeTerminator`. These attributes correspond to the additional arguments above for `read()` and `write(_:)`. The attribute `operationDelay` is used to customize how much time the computer shoud wait between calls to `read()` and `write(_:)`. Some instruments will stop working correctly if messages are sent too quickly so a a small amount of time is waited before sending each message. By deault, this value is 1 ms. Each instrument can have its own custom attributes. Setting the attributes on one instrument will not change the attributes of other instruments:
 ```swift
 // Sets the attributes to SwiftVISASwift's default values
 instrument.chunkSize = 1024 // Set the default chunk size for reading long messages
 instrument.encoding = .utf8 // Set the encoding to use for reading and writing messages
 instrument.operationDelay = 1e-3 // Set the number of seconds to wait before sending each message
-instrument.readTerminator = "\n" // Set the character/string that indicates an end of a message from the insturment
-instrument.writeTermiantor = "\n" // Set the character/string that indicates an end of the message to the insturment
+instrument.readTerminator = "\n" // Set the character/string that indicates an end of a message from the instrument
+instrument.writeTermiantor = "\n" // Set the character/string that indicates an end of the message to the instrument
 ```
 
 To customize how SwiftVISASwift decodes types, you can create your own custom decoders. To create a custom decoder, create a struct that conforms to the `MessageDecoder` protocol. You will need to declare the type you wish to decode to as `DeccodingType`, and you will need to implement `decode(_:)`:
