@@ -49,7 +49,7 @@ Fifth, paste the URL to the SwiftVISASwift source copied earlier from Github int
 <img style="text-align: center;"
            src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_5_addSwiftVISASwiftPackage.png" width="756" height="506">
 
-Sixth and last, check your Signings and Capabilities by navigating to Targets → Signings and Capabilities.  The easiest settings to use are #Automatically manage Signing# set to _Yes/Checked_ and #Signing Certificate# to _Sign to Run Locally_.  Other settings can be used if you have an Apple ID Developer Account and Certificate:
+Sixth and last, check your Signings and Capabilities by navigating to Targets → Signings and Capabilities.  The easiest settings to use are **Automatically manage Signing** set to _Yes/Checked_ and **Signing Certificate** to _Sign to Run Locally_.  Other settings can be used if you have an Apple ID Developer Account and Certificate:
 
 <img style="text-align: center;"
            src="https://github.com/SwiftVISA/SwiftVISASwift/blob/main/docs/img/Setup_6_signingAndPermissions.png" width="756" height="506">
