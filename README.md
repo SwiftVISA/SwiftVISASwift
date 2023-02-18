@@ -266,3 +266,8 @@ Examples of unacceptable behavior by participants include:
 * Publishing others' private information without explicit permission
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
+  
+ 
+### Reporting Issues or Problems
+* Please submit an Issue if you have any problems with any SwiftVISA frameworks/packages
+* Please submit an Issue if you need any help installing or working with any of the SwiftVISA Frameworks/Packages
