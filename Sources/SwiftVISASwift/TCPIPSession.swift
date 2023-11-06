@@ -10,13 +10,18 @@ import CoreSwiftVISA
 import Socket
 
 /// A class representing a connection over TCPIP.
-class TCPIPSession {
+actor TCPIPSession {
 	/// The socket used for communicating with the instrument.
 	var socket: Socket
-	/// The address of the instrument.
+	
+  /// The address of the instrument.
 	let address: String
+  
 	/// The port of the instrument.
 	let port: Int
+  
+  /// `true` if the session is closed.
+  private var isClosed = false
 	
 	typealias Error = TCPIPInstrument.Error
 	/// Creates a session to an instrument at the given address and port.
@@ -27,8 +32,8 @@ class TCPIPSession {
 	///   - port: The port to connect to.
 	///   - timeout: The maximum amout of time to try to connect to the instrument.
 	/// - Throws: If an error occured while establishing the session.
-	init(address: String, port: Int, timeout: TimeInterval) throws {
-		try socket = Self.rawSocket(atAddress: address, port: port, timeout: timeout)
+	init(address: String, port: Int, timeout: TimeInterval) async throws {
+		socket = try await Self.rawSocket(atAddress: address, port: port, timeout: timeout)
 		
 		self.address = address
 		self.port = port
@@ -41,7 +46,7 @@ extension TCPIPSession {
 		atAddress address: String,
 		port: Int,
 		timeout: TimeInterval
-	) throws -> Socket {
+	) async throws -> Socket {
 		var socket: Socket
 		
 		do {
@@ -53,8 +58,7 @@ extension TCPIPSession {
 		socket.readBufferSize = 1024
 		
 		do {
-			// TODO: We might need to specify a timeout value here. It says adding a timeout can put it into non-blocking mode, and I'm not sure What that will do.
-			try socket.connect(to: address, port: Int32(port))
+      try socket.connect(to: address, port: Int32(port), timeout: UInt(timeout * 1_000))
 		} catch { throw Error.couldNotConnect }
 		
 		do {
@@ -76,13 +80,16 @@ extension TCPIPSession {
 
 // MARK:- Session
 extension TCPIPSession: Session {
-	func close() {
-		// Close the connection to the socket because we will no longer need it.
-		socket.close()
+	func close() async {
+    if !isClosed {
+      socket.close()
+      isClosed = true
+    }
 	}
 	
-	func reconnect(timeout: TimeInterval) throws {
-		socket.close()
-		try socket = Self.rawSocket(atAddress: address, port: port, timeout: timeout)
+	func reconnect(timeout: TimeInterval) async throws {
+		await close()
+		socket = try await Self.rawSocket(atAddress: address, port: port, timeout: timeout)
+    isClosed = false
 	}
 }
