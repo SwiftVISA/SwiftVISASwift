@@ -12,7 +12,7 @@ let package = Package(
   ],
   dependencies: [
     .package(url: "https://github.com/SwiftVISA/CoreSwiftVISA.git", .branch("actor")),
-    .package(url: "https://github.com/IBM-Swift/BlueSocket.git", from: "1.0.0")
+    .package(url: "https://github.com/SwiftVISA/BlueSocket.git", .branch("master") )
   ],
   targets: [
     .target(
